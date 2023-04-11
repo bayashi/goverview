@@ -1,14 +1,15 @@
 # goverview
 
-`goverview` provides 
+`goverview` provides an overview of Golang project
 
 ## Usage
 
+    $ goverview go/src/github.com/bayashi/goverview
 
 
 ## Installation
 
-    go get github.com/bayashi/goverview
+    go install github.com/bayashi/goverview
 
 ## License
 
