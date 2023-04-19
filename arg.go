@@ -7,9 +7,9 @@ import (
 )
 
 type options struct {
-	file       string
-	ignoreDir  []string
-	ignoreFile []string
+	path    string
+	ignore  []string
+	showAll bool
 }
 
 func parseArgs() *options {
@@ -17,13 +17,13 @@ func parseArgs() *options {
 
 	var flagHelp bool
 	flag.BoolVarP(&flagHelp, "help", "h", false, "Show help (This message) and exit")
-	flag.StringArrayVarP(&o.ignoreDir, "ignore-dir", "", []string{}, "Ignore Directories to show")
-	flag.StringArrayVarP(&o.ignoreFile, "ignore-dir", "", []string{}, "Ignore Files to show")
+	flag.StringArrayVarP(&o.ignore, "ignore", "", []string{}, "Ignore path to show if a given string would match")
+	flag.BoolVarP(&o.showAll, "show-all", "a", false, "Show all stuff")
 
 	flag.Parse()
 
 	if flagHelp {
-		putHelp(fmt.Sprintf("[%s] Version v%s", cmdName, version))
+		putHelp(fmt.Sprintf("Version v%s", version))
 	}
 
 	o.targetFile()
@@ -33,16 +33,16 @@ func parseArgs() *options {
 
 func (o *options) targetFile() {
 	for _, arg := range flag.Args() {
-		if o.file != "" {
+		if o.path != "" {
 			putHelp(fmt.Sprintf("Err: Wrong args. Unnecessary arg [%s]", arg))
 		}
 		if arg == "-" {
 			continue
 		}
-		o.file = arg
+		o.path = arg
 	}
 
-	if o.file == "" {
-		putHelp("Err: Wrong args. You should specify a FILE")
+	if o.path == "" {
+		putHelp("Err: Wrong args. You should specify a directory path")
 	}
 }

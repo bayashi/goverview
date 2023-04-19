@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+
+	pt "github.com/bayashi/go-proptree"
 )
 
 const (
@@ -21,12 +23,13 @@ func main() {
 
 func run() error {
 	o := parseArgs()
-	overview, err := buildOverview(o)
+
+	tree, err := fromLocal(o)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(overview)
+	tree.RenderAsText(os.Stdout, pt.RenderTextDefaultOptions())
 
 	return nil
 }
