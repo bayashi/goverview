@@ -81,7 +81,7 @@ Full options:
 
 ## Installation
 
-    go install github.com/bayashi/goverview
+    go install github.com/bayashi/goverview@latest
 
 ## License
 
