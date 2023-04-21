@@ -1,5 +1,9 @@
 # goverview
 
+<a href="https://github.com/bayashi/goverview/blob/main/LICENSE"><img src="https://img.shields.io/badge/LICENSE-MIT-GREEN.png"></a>
+<a href="https://github.com/bayashi/goverview/actions"><img src="https://github.com/bayashi/goverview/workflows/main/badge.svg?_t=1681289447"/></a>
+<a href="https://pkg.go.dev/github.com/bayashi/goverview"><img src="https://pkg.go.dev/badge/github.com/bayashi/goverview.svg" alt="Go Reference"></a>
+
 `goverview` provides an overview of Golang project
 
 Don't try big project yet :D
