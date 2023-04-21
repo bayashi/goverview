@@ -12,6 +12,10 @@ type organizer struct {
 	structMap          map[string]bool
 	privateStructs     []string
 	privateStructMap   map[string]bool
+	constants          []string
+	constantMap        map[string]bool
+	privateConstants   []string
+	privateConstantMap map[string]bool
 	functions          []string
 	functionMap        map[string]bool
 	privateFunctions   []string
@@ -32,6 +36,10 @@ func GoInfo(filepath string, showAll bool) (*FileInfo, error) {
 		structMap:          map[string]bool{},
 		privateStructs:     []string{},
 		privateStructMap:   map[string]bool{},
+		constants:          []string{},
+		constantMap:        map[string]bool{},
+		privateConstants:   []string{},
+		privateConstantMap: map[string]bool{},
 		functions:          []string{},
 		functionMap:        map[string]bool{},
 		privateFunctions:   []string{},
@@ -83,6 +91,18 @@ func goInfoProcessIdent(o *ast.Object, i *organizer) {
 				i.privateStructMap[o.Name] = true
 			}
 		}
+	case ast.Con:
+		if ast.IsExported(o.Name) {
+			if _, isExists := i.constantMap[o.Name]; !isExists {
+				i.constants = append(i.constants, o.Name)
+				i.constantMap[o.Name] = true
+			}
+		} else {
+			if _, isExists := i.privateConstantMap[o.Name]; !isExists {
+				i.privateConstants = append(i.privateConstants, o.Name)
+				i.privateConstantMap[o.Name] = true
+			}
+		}
 	}
 }
 
@@ -99,6 +119,12 @@ func buildDescriptions(i *organizer, showAll bool) *[]string {
 	}
 	if showAll && len(i.privateFunctions) > 0 {
 		descriptions = append(descriptions, "func: "+strings.Join(i.privateFunctions, ", "))
+	}
+	if len(i.constants) > 0 {
+		descriptions = append(descriptions, "Const: "+strings.Join(i.constants, ", "))
+	}
+	if showAll && len(i.privateConstants) > 0 {
+		descriptions = append(descriptions, "const: "+strings.Join(i.privateConstants, ", "))
 	}
 
 	return &descriptions
