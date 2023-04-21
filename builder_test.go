@@ -20,12 +20,14 @@ go 1.19
 func mainFile() string {
 	return `package main
 
+const X = "x"
+
 func main() {
 	println("main")
 }
 
 func X() {
-	println("X")
+	println(X)
 }
 `
 }
@@ -64,7 +66,8 @@ func expect1(dir string) string {
 		"├── bar.txt\n" +
 		"├── go.mod: go 1.19\n" +
 		"└──* main.go: main\n" +
-		"      Func: X\n"
+		"      Func: X\n" +
+		"      Const: X\n"
 }
 
 // With private func
@@ -77,7 +80,8 @@ func expect2(dir string) string {
 		"├── go.mod: go 1.19\n" +
 		"└──* main.go: main\n" +
 		"      Func: X\n" +
-		"      func: main\n"
+		"      func: main\n" +
+		"      Const: X\n"
 }
 
 // Without bar.txt
@@ -88,7 +92,8 @@ func expect3(dir string) string {
 		"├── LICENSE: License MIT\n" +
 		"├── go.mod: go 1.19\n" +
 		"└──* main.go: main\n" +
-		"      Func: X\n"
+		"      Func: X\n" +
+		"      Const: X\n"
 }
 
 func createFile(path string, content string) {
