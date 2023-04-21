@@ -117,18 +117,19 @@ func TestGoProject(t *testing.T) {
 	createFile(filepath.Join(temp, "bar.txt"), "")
 
 	tts := []struct {
+		name   string
 		o      *options
 		expect string
 	}{
-		{o: &options{path: temp}, expect: expect1(base)},
-		{o: &options{path: temp, showAll: true}, expect: expect2(base)},
-		{o: &options{path: temp, ignore: []string{"bar.txt"}}, expect: expect3(base)},
+		{name: "general", o: &options{path: temp}, expect: expect1(base)},
+		{name: "showAll", o: &options{path: temp, showAll: true}, expect: expect2(base)},
+		{name: "ignore:bar.txt", o: &options{path: temp, ignore: []string{"bar.txt"}}, expect: expect3(base)},
 	}
 	for _, tt := range tts {
 		tree, err := fromLocal(tt.o)
 		actually.Got(err).Nil(t)
 		buf := &bytes.Buffer{}
 		tree.RenderAsText(buf, pt.RenderTextDefaultOptions())
-		actually.Got(buf.String()).Expect(tt.expect).ShowRawData().Same(t)
+		actually.Got(buf.String()).Expect(tt.expect).ShowRawData().Same(t, tt.name)
 	}
 }
