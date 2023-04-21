@@ -20,12 +20,14 @@ go 1.19
 func mainFile() string {
 	return `package main
 
+const X = "x"
+
 func main() {
 	println("main")
 }
 
 func X() {
-	println("X")
+	println(X)
 }
 `
 }
@@ -64,7 +66,8 @@ func expect1(dir string) string {
 		"├── bar.txt\n" +
 		"├── go.mod: go 1.19\n" +
 		"└──* main.go: main\n" +
-		"      Func: X\n"
+		"      Func: X\n" +
+		"      Const: X\n"
 }
 
 // With private func
@@ -77,7 +80,8 @@ func expect2(dir string) string {
 		"├── go.mod: go 1.19\n" +
 		"└──* main.go: main\n" +
 		"      Func: X\n" +
-		"      func: main\n"
+		"      func: main\n" +
+		"      Const: X\n"
 }
 
 // Without bar.txt
@@ -88,7 +92,8 @@ func expect3(dir string) string {
 		"├── LICENSE: License MIT\n" +
 		"├── go.mod: go 1.19\n" +
 		"└──* main.go: main\n" +
-		"      Func: X\n"
+		"      Func: X\n" +
+		"      Const: X\n"
 }
 
 func createFile(path string, content string) {
@@ -112,18 +117,19 @@ func TestGoProject(t *testing.T) {
 	createFile(filepath.Join(temp, "bar.txt"), "")
 
 	tts := []struct {
+		name   string
 		o      *options
 		expect string
 	}{
-		{o: &options{path: temp}, expect: expect1(base)},
-		{o: &options{path: temp, showAll: true}, expect: expect2(base)},
-		{o: &options{path: temp, ignore: []string{"bar.txt"}}, expect: expect3(base)},
+		{name: "general", o: &options{path: temp}, expect: expect1(base)},
+		{name: "showAll", o: &options{path: temp, showAll: true}, expect: expect2(base)},
+		{name: "ignore:bar.txt", o: &options{path: temp, ignore: []string{"bar.txt"}}, expect: expect3(base)},
 	}
 	for _, tt := range tts {
 		tree, err := fromLocal(tt.o)
 		actually.Got(err).Nil(t)
 		buf := &bytes.Buffer{}
 		tree.RenderAsText(buf, pt.RenderTextDefaultOptions())
-		actually.Got(buf.String()).Expect(tt.expect).ShowRawData().Same(t)
+		actually.Got(buf.String()).Expect(tt.expect).ShowRawData().Same(t, tt.name)
 	}
 }
