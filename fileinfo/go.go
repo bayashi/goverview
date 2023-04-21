@@ -111,23 +111,20 @@ func buildDescriptions(i *organizer, showAll bool) *[]string {
 	if len(i.structs) > 0 {
 		descriptions = append(descriptions, "Struct: "+strings.Join(i.structs, ", "))
 	}
+	if showAll && len(i.privateStructs) > 0 {
+		descriptions = append(descriptions, "struct: "+strings.Join(i.privateStructs, ", "))
+	}
 	if len(i.functions) > 0 {
 		descriptions = append(descriptions, "Func: "+strings.Join(i.functions, ", "))
+	}
+	if showAll && len(i.privateFunctions) > 0 {
+		descriptions = append(descriptions, "func: "+strings.Join(i.privateFunctions, ", "))
 	}
 	if len(i.constants) > 0 {
 		descriptions = append(descriptions, "Const: "+strings.Join(i.constants, ", "))
 	}
-
-	if showAll {
-		if len(i.privateStructs) > 0 {
-			descriptions = append(descriptions, "struct: "+strings.Join(i.privateStructs, ", "))
-		}
-		if len(i.privateFunctions) > 0 {
-			descriptions = append(descriptions, "func: "+strings.Join(i.privateFunctions, ", "))
-		}
-		if len(i.privateConstants) > 0 {
-			descriptions = append(descriptions, "const: "+strings.Join(i.privateConstants, ", "))
-		}
+	if showAll && len(i.privateConstants) > 0 {
+		descriptions = append(descriptions, "const: "+strings.Join(i.privateConstants, ", "))
 	}
 
 	return &descriptions
