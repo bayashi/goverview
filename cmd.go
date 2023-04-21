@@ -17,7 +17,7 @@ func putErr(message ...interface{}) {
 }
 
 func putUsage() {
-	putErr(fmt.Sprintf("Usage: %s [OPTIONS] FILE", cmdName))
+	putErr(fmt.Sprintf("Usage: %s [OPTIONS] DIR", cmdName))
 }
 
 func putHelp(message string) {

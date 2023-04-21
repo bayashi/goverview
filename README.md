@@ -71,7 +71,7 @@ You can see also private stuff with `-a` option.
 Full options:
 
     Version v0.0.1
-    Usage: goverview [OPTIONS] FILE
+    Usage: goverview [OPTIONS] DIR
     Options:
       -h, --help                 Show help (This message) and exit
           --ignore stringArray   Ignore path to show if a given string would match
