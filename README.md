@@ -4,9 +4,7 @@
 <a href="https://github.com/bayashi/goverview/actions"><img src="https://github.com/bayashi/goverview/workflows/main/badge.svg?_t=1681289447"/></a>
 <a href="https://pkg.go.dev/github.com/bayashi/goverview"><img src="https://pkg.go.dev/badge/github.com/bayashi/goverview.svg" alt="Go Reference"></a>
 
-`goverview` provides an overview of Golang project
-
-Don't try big project yet :D
+`goverview` provides an overview as ASCII tree for a Golang project.
 
 ## Usage
 
@@ -81,7 +79,7 @@ Full options:
 
 ## Installation
 
-    go install github.com/bayashi/goverview
+    go install github.com/bayashi/goverview@latest
 
 ## License
 
