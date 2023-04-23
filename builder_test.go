@@ -130,6 +130,6 @@ func TestGoProject(t *testing.T) {
 		actually.Got(err).Nil(t)
 		buf := &bytes.Buffer{}
 		tree.RenderAsText(buf, pt.RenderTextDefaultOptions())
-		actually.Got(buf.String()).Expect(tt.expect).ShowRawData().Same(t, tt.name)
+		actually.Got(buf.String()).Expect(tt.expect).X().Same(t, tt.name)
 	}
 }
