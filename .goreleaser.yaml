@@ -1,0 +1,13 @@
+builds:
+  - env:
+      - CGO_ENABLED=0
+    id: "goverview"
+    binary: goverview
+    goos:
+      - linux
+      - darwin
+      - windows
+archives:
+  - format_overrides:
+      - goos: windows
+        format: zip
