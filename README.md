@@ -79,6 +79,21 @@ Full options:
 
 ## Installation
 
+### homebrew install
+
+If you are using Mac:
+
+    brew tap bayashi/goverview
+    brew install bayashi/goverview
+
+### binary install
+
+Download binary from here: https://github.com/bayashi/goverview/releases
+
+### go install
+
+If you have golang envvironment:
+
     go install github.com/bayashi/goverview@latest
 
 ## License

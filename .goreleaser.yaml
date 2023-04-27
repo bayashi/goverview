@@ -11,3 +11,13 @@ archives:
   - format_overrides:
       - goos: windows
         format: zip
+brews:
+  - tap:
+      owner: bayashi
+      name: homebrew-goverview
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    folder: Formula
+    homepage: https://github.com/bayashi/goverview
+    description: Display an overview as ASCII tree for a Golang project
+    test: |
+      system "#{bin}/goverview", './'
