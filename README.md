@@ -70,7 +70,6 @@ You can see also private stuff with `-a` option.
 
 Full options:
 
-    Version v0.4.0
     Usage: goverview [OPTIONS] DIR
     Options:
       -h, --help                 Show help (This message) and exit
