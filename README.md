@@ -70,12 +70,13 @@ You can see also private stuff with `-a` option.
 
 Full options:
 
-    Version v0.0.1
+    Version v0.3.2
     Usage: goverview [OPTIONS] DIR
     Options:
       -h, --help                 Show help (This message) and exit
           --ignore stringArray   Ignore path to show if a given string would match
       -a, --show-all             Show all stuff
+      -v, --version              Show version and build info and exit
 
 ## Installation
 
