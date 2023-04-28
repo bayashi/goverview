@@ -7,8 +7,8 @@ import (
 )
 
 // GoModInfo provides go.mod file info: specified go version
-func GoModInfo(filepath string, showAll bool) (*FileInfo, error) {
-	file, err := os.Open(filepath)
+func GoModInfo(args *Args) (*FileInfo, error) {
+	file, err := os.Open(args.FilePath)
 	if err != nil {
 		return nil, err
 	}

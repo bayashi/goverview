@@ -5,3 +5,9 @@ type FileInfo struct {
 	Tag          string
 	Descriptions []string
 }
+
+type Args struct {
+	FilePath string
+	ShowAll  bool
+	HideTest bool
+}

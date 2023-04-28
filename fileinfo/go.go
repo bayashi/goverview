@@ -23,9 +23,9 @@ type organizer struct {
 }
 
 // GoInfo provides golang file *.go info
-func GoInfo(filepath string, showAll bool) (*FileInfo, error) {
+func GoInfo(args *Args) (*FileInfo, error) {
 	fset := token.NewFileSet()
-	fileAst, err := parser.ParseFile(fset, filepath, nil, 0)
+	fileAst, err := parser.ParseFile(fset, args.FilePath, nil, 0)
 	if err != nil {
 		return &FileInfo{}, err
 	}
@@ -58,10 +58,15 @@ func GoInfo(filepath string, showAll bool) (*FileInfo, error) {
 		return true
 	})
 
+	descr := []string{}
+	if !args.HideTest || !strings.HasSuffix(args.FilePath, "_test.go") {
+		descr = *buildDescriptions(&i, args)
+	}
+
 	return &FileInfo{
 		Icon:         "*",
 		Tag:          fileAst.Name.String(),
-		Descriptions: *buildDescriptions(&i, showAll),
+		Descriptions: descr,
 	}, nil
 }
 
@@ -106,24 +111,24 @@ func goInfoProcessIdent(o *ast.Object, i *organizer) {
 	}
 }
 
-func buildDescriptions(i *organizer, showAll bool) *[]string {
+func buildDescriptions(i *organizer, args *Args) *[]string {
 	descriptions := []string{}
 	if len(i.structs) > 0 {
 		descriptions = append(descriptions, "Struct: "+strings.Join(i.structs, ", "))
 	}
-	if showAll && len(i.privateStructs) > 0 {
+	if args.ShowAll && len(i.privateStructs) > 0 {
 		descriptions = append(descriptions, "struct: "+strings.Join(i.privateStructs, ", "))
 	}
 	if len(i.functions) > 0 {
 		descriptions = append(descriptions, "Func: "+strings.Join(i.functions, ", "))
 	}
-	if showAll && len(i.privateFunctions) > 0 {
+	if args.ShowAll && len(i.privateFunctions) > 0 {
 		descriptions = append(descriptions, "func: "+strings.Join(i.privateFunctions, ", "))
 	}
 	if len(i.constants) > 0 {
 		descriptions = append(descriptions, "Const: "+strings.Join(i.constants, ", "))
 	}
-	if showAll && len(i.privateConstants) > 0 {
+	if args.ShowAll && len(i.privateConstants) > 0 {
 		descriptions = append(descriptions, "const: "+strings.Join(i.privateConstants, ", "))
 	}
 
