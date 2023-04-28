@@ -39,38 +39,38 @@ func validateDirPath(path string) (string, error) {
 }
 
 type walkerArgs struct {
-	path        string
-	f           os.FileInfo
+	filePath    string
+	fileInfo    os.FileInfo
 	relPath     string
 	parentN     *pt.N
-	s           *map[string]*pt.N
+	seen        *map[string]*pt.N
 	currentPath *string
 	o           *options
 }
 
-func buildTree(o *options, dirPath string) (*pt.N, error) {
-	gitignoreFilePath := strings.Join([]string{dirPath, ".gitignore"}, string(os.PathSeparator))
+func buildTree(o *options, rootDirPath string) (*pt.N, error) {
+	gitignoreFilePath := strings.Join([]string{rootDirPath, ".gitignore"}, string(os.PathSeparator))
 	gitignore, _ := ignore.CompileIgnoreFile(gitignoreFilePath)
 
-	dirPathLen := len(dirPath)
-	rootN := pt.Node(filepath.Base(dirPath) + "/")
-	s := map[string]*pt.N{"": rootN}
+	rootDirPathLen := len(rootDirPath)
+	rootN := pt.Node(filepath.Base(rootDirPath) + "/")
+	seen := map[string]*pt.N{"": rootN}
 	currentPath := ""
 
-	walkErr := filepath.Walk(dirPath, func(path string, f os.FileInfo, err error) error {
-		if len(path) == dirPathLen {
+	walkErr := filepath.Walk(rootDirPath, func(filePath string, fileInfo os.FileInfo, err error) error {
+		if len(filePath) == rootDirPathLen {
 			return nil // skip rootN
 		}
-		if (gitignore != nil && gitignore.MatchesPath(path)) || isSkipPath(o, path) {
+		if (gitignore != nil && gitignore.MatchesPath(filePath)) || isSkipPath(o, filePath) {
 			return nil
 		}
 
 		arg := &walkerArgs{
-			path:        path,
-			f:           f,
-			relPath:     path[dirPathLen+1:],
+			filePath:    filePath,
+			fileInfo:    fileInfo,
+			relPath:     filePath[rootDirPathLen+1:],
 			parentN:     rootN,
-			s:           &s,
+			seen:        &seen,
 			currentPath: &currentPath,
 			o:           o,
 		}
@@ -89,7 +89,7 @@ const (
 )
 
 func walkProcess(arg *walkerArgs) error {
-	ss := *arg.s
+	ss := *arg.seen
 	cPath := *arg.currentPath
 	elements := strings.Split(arg.relPath, string(os.PathSeparator))
 	for i, el := range elements {
@@ -97,7 +97,7 @@ func walkProcess(arg *walkerArgs) error {
 		if i == len(elements)-1 {
 			var n *pt.N
 			var err error
-			if arg.f.IsDir() {
+			if arg.fileInfo.IsDir() {
 				n = pt.Node(el + "/")
 			} else {
 				n, err = getFileInfo(pt.Node(el), arg)
@@ -120,22 +120,22 @@ func walkProcess(arg *walkerArgs) error {
 }
 
 func getFileInfo(n *pt.N, arg *walkerArgs) (*pt.N, error) {
-	if filepath.Ext(arg.path) == ".go" {
-		fi, err := fileinfo.GoInfo(arg.path, arg.o.showAll)
+	if filepath.Ext(arg.filePath) == ".go" {
+		fi, err := fileinfo.GoInfo(arg.filePath, arg.o.showAll)
 		if err != nil {
 			return nil, err
 		}
 		n.Icon(fi.Icon).
 			Tag(fi.Tag).
 			Descriptions(fi.Descriptions)
-	} else if filepath.Base(arg.path) == "go.mod" {
-		fi, err := fileinfo.GoModInfo(arg.path, arg.o.showAll)
+	} else if filepath.Base(arg.filePath) == "go.mod" {
+		fi, err := fileinfo.GoModInfo(arg.filePath, arg.o.showAll)
 		if err != nil {
 			return nil, err
 		}
 		n.Tag(fi.Tag)
-	} else if filepath.Base(arg.path) == "LICENSE" {
-		fi, err := fileinfo.LicenseInfo(arg.path, arg.o.showAll)
+	} else if filepath.Base(arg.filePath) == "LICENSE" {
+		fi, err := fileinfo.LicenseInfo(arg.filePath, arg.o.showAll)
 		if err != nil {
 			return nil, err
 		}
@@ -145,14 +145,14 @@ func getFileInfo(n *pt.N, arg *walkerArgs) (*pt.N, error) {
 	return n, nil
 }
 
-func isSkipPath(o *options, path string) bool {
-	if strings.Contains(path, "/.git") &&
-		!strings.Contains(path, "/.gitignore") && !strings.Contains(path, "/.github") {
+func isSkipPath(o *options, filePath string) bool {
+	if strings.Contains(filePath, "/.git") &&
+		!strings.Contains(filePath, "/.gitignore") && !strings.Contains(filePath, "/.github") {
 		return true // skip
 	}
 
 	for _, i := range o.ignore {
-		if strings.Contains(path, i) {
+		if strings.Contains(filePath, i) {
 			return true // skip
 		}
 	}
