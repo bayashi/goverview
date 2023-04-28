@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	version = ""
+	version     = ""
 	installFrom = "Source"
 )
 
