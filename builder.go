@@ -120,22 +120,29 @@ func walkProcess(arg *walkerArgs) error {
 }
 
 func getFileInfo(n *pt.N, arg *walkerArgs) (*pt.N, error) {
+	fiArgs := &fileinfo.Args{
+		FilePath: arg.filePath,
+		ShowAll:  arg.o.showAll,
+		HideTest: arg.o.hideTest,
+	}
+
 	if filepath.Ext(arg.filePath) == ".go" {
-		fi, err := fileinfo.GoInfo(arg.filePath, arg.o.showAll)
+		fi, err := fileinfo.GoInfo(fiArgs)
 		if err != nil {
 			return nil, err
 		}
-		n.Icon(fi.Icon).
-			Tag(fi.Tag).
-			Descriptions(fi.Descriptions)
+		n.Icon(fi.Icon).Tag(fi.Tag)
+		if !arg.o.hideTest || !strings.HasSuffix(filepath.Base(arg.filePath), "_test.go") {
+			n.Descriptions(fi.Descriptions)
+		}
 	} else if filepath.Base(arg.filePath) == "go.mod" {
-		fi, err := fileinfo.GoModInfo(arg.filePath, arg.o.showAll)
+		fi, err := fileinfo.GoModInfo(fiArgs)
 		if err != nil {
 			return nil, err
 		}
 		n.Tag(fi.Tag)
 	} else if filepath.Base(arg.filePath) == "LICENSE" {
-		fi, err := fileinfo.LicenseInfo(arg.filePath, arg.o.showAll)
+		fi, err := fileinfo.LicenseInfo(fiArgs)
 		if err != nil {
 			return nil, err
 		}

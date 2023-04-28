@@ -15,9 +15,10 @@ var (
 )
 
 type options struct {
-	path    string
-	ignore  []string
-	showAll bool
+	path     string
+	ignore   []string
+	showAll  bool
+	hideTest bool
 }
 
 func parseArgs() *options {
@@ -29,6 +30,7 @@ func parseArgs() *options {
 	flag.BoolVarP(&flagVersion, "version", "v", false, "Show version and build info and exit")
 	flag.StringArrayVarP(&o.ignore, "ignore", "", []string{}, "Ignore path to show if a given string would match")
 	flag.BoolVarP(&o.showAll, "show-all", "a", false, "Show all stuff")
+	flag.BoolVarP(&o.hideTest, "hide-test", "t", false, "Hide contents of test files")
 
 	flag.Parse()
 
