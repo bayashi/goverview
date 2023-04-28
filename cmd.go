@@ -8,6 +8,10 @@ import (
 )
 
 const (
+	cmdName string = "goverview"
+)
+
+const (
 	exitOK  int = 0
 	exitErr int = 1
 )

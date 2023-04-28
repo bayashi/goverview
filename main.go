@@ -7,11 +7,6 @@ import (
 	pt "github.com/bayashi/go-proptree"
 )
 
-const (
-	cmdName string = "goverview"
-	version string = "0.0.1"
-)
-
 func main() {
 	err := run()
 	if err != nil {

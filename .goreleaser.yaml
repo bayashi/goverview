@@ -7,6 +7,7 @@ builds:
       - linux
       - darwin
       - windows
+    ldflags: -s -w -X main.version={{.Version}} -X "main.installFrom=Binary"
 archives:
   - format_overrides:
       - goos: windows
@@ -20,4 +21,4 @@ brews:
     homepage: https://github.com/bayashi/goverview
     description: Display an overview as ASCII tree for a Golang project
     test: |
-      system "#{bin}/goverview", './'
+      system "#{bin}/goverview", '--version'
