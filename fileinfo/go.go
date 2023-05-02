@@ -7,19 +7,24 @@ import (
 	"strings"
 )
 
+type info struct {
+	list []string
+	m    map[string]struct{}
+}
+
+type p struct {
+	public  *info
+	private *info
+}
+
 type organizer struct {
-	structs            []string
-	structMap          map[string]bool
-	privateStructs     []string
-	privateStructMap   map[string]bool
-	constants          []string
-	constantMap        map[string]bool
-	privateConstants   []string
-	privateConstantMap map[string]bool
-	functions          []string
-	functionMap        map[string]bool
-	privateFunctions   []string
-	privateFunctionMap map[string]bool
+	structs   *p
+	constants *p
+	functions *p
+}
+
+func defInfo() *info {
+	return &info{list: []string{}, m: map[string]struct{}{}}
 }
 
 // GoInfo provides golang file *.go info
@@ -32,18 +37,9 @@ func GoInfo(args *Args) (*FileInfo, error) {
 	//ast.Print(fset, fileAst)
 
 	var i = organizer{
-		structs:            []string{},
-		structMap:          map[string]bool{},
-		privateStructs:     []string{},
-		privateStructMap:   map[string]bool{},
-		constants:          []string{},
-		constantMap:        map[string]bool{},
-		privateConstants:   []string{},
-		privateConstantMap: map[string]bool{},
-		functions:          []string{},
-		functionMap:        map[string]bool{},
-		privateFunctions:   []string{},
-		privateFunctionMap: map[string]bool{},
+		structs:   &p{public: defInfo(), private: defInfo()},
+		constants: &p{public: defInfo(), private: defInfo()},
+		functions: &p{public: defInfo(), private: defInfo()},
 	}
 
 	ast.Inspect(fileAst, func(n ast.Node) bool {
@@ -74,38 +70,38 @@ func goInfoProcessIdent(o *ast.Object, i *organizer) {
 	switch o.Kind {
 	case ast.Fun:
 		if ast.IsExported(o.Name) {
-			if _, isExists := i.functionMap[o.Name]; !isExists {
-				i.functions = append(i.functions, o.Name)
-				i.functionMap[o.Name] = true
+			if _, isExists := i.functions.public.m[o.Name]; !isExists {
+				i.functions.public.list = append(i.functions.public.list, o.Name)
+				i.functions.public.m[o.Name] = struct{}{}
 			}
 		} else {
-			if _, isExists := i.privateFunctionMap[o.Name]; !isExists {
-				i.privateFunctions = append(i.privateFunctions, o.Name)
-				i.privateFunctionMap[o.Name] = true
+			if _, isExists := i.functions.private.m[o.Name]; !isExists {
+				i.functions.private.list = append(i.functions.private.list, o.Name)
+				i.functions.private.m[o.Name] = struct{}{}
 			}
 		}
 	case ast.Typ:
 		if ast.IsExported(o.Name) {
-			if _, isExists := i.structMap[o.Name]; !isExists {
-				i.structs = append(i.structs, o.Name)
-				i.structMap[o.Name] = true
+			if _, isExists := i.structs.public.m[o.Name]; !isExists {
+				i.structs.public.list = append(i.structs.public.list, o.Name)
+				i.structs.public.m[o.Name] = struct{}{}
 			}
 		} else {
-			if _, isExists := i.privateStructMap[o.Name]; !isExists {
-				i.privateStructs = append(i.privateStructs, o.Name)
-				i.privateStructMap[o.Name] = true
+			if _, isExists := i.structs.private.m[o.Name]; !isExists {
+				i.structs.private.list = append(i.structs.private.list, o.Name)
+				i.structs.private.m[o.Name] = struct{}{}
 			}
 		}
 	case ast.Con:
 		if ast.IsExported(o.Name) {
-			if _, isExists := i.constantMap[o.Name]; !isExists {
-				i.constants = append(i.constants, o.Name)
-				i.constantMap[o.Name] = true
+			if _, isExists := i.constants.public.m[o.Name]; !isExists {
+				i.constants.public.list = append(i.constants.public.list, o.Name)
+				i.constants.public.m[o.Name] = struct{}{}
 			}
 		} else {
-			if _, isExists := i.privateConstantMap[o.Name]; !isExists {
-				i.privateConstants = append(i.privateConstants, o.Name)
-				i.privateConstantMap[o.Name] = true
+			if _, isExists := i.constants.private.m[o.Name]; !isExists {
+				i.constants.private.list = append(i.constants.private.list, o.Name)
+				i.constants.private.m[o.Name] = struct{}{}
 			}
 		}
 	}
@@ -113,23 +109,23 @@ func goInfoProcessIdent(o *ast.Object, i *organizer) {
 
 func buildDescriptions(i *organizer, args *Args) *[]string {
 	descriptions := []string{}
-	if len(i.structs) > 0 {
-		descriptions = append(descriptions, "Struct: "+strings.Join(i.structs, ", "))
+	if len(i.structs.public.list) > 0 {
+		descriptions = append(descriptions, "Struct: "+strings.Join(i.structs.public.list, ", "))
 	}
-	if args.ShowAll && len(i.privateStructs) > 0 {
-		descriptions = append(descriptions, "struct: "+strings.Join(i.privateStructs, ", "))
+	if args.ShowAll && len(i.structs.private.list) > 0 {
+		descriptions = append(descriptions, "struct: "+strings.Join(i.structs.private.list, ", "))
 	}
-	if len(i.functions) > 0 {
-		descriptions = append(descriptions, "Func: "+strings.Join(i.functions, ", "))
+	if len(i.functions.public.list) > 0 {
+		descriptions = append(descriptions, "Func: "+strings.Join(i.functions.public.list, ", "))
 	}
-	if args.ShowAll && len(i.privateFunctions) > 0 {
-		descriptions = append(descriptions, "func: "+strings.Join(i.privateFunctions, ", "))
+	if args.ShowAll && len(i.functions.private.list) > 0 {
+		descriptions = append(descriptions, "func: "+strings.Join(i.functions.private.list, ", "))
 	}
-	if len(i.constants) > 0 {
-		descriptions = append(descriptions, "Const: "+strings.Join(i.constants, ", "))
+	if len(i.constants.public.list) > 0 {
+		descriptions = append(descriptions, "Const: "+strings.Join(i.constants.public.list, ", "))
 	}
-	if args.ShowAll && len(i.privateConstants) > 0 {
-		descriptions = append(descriptions, "const: "+strings.Join(i.privateConstants, ", "))
+	if args.ShowAll && len(i.constants.private.list) > 0 {
+		descriptions = append(descriptions, "const: "+strings.Join(i.constants.private.list, ", "))
 	}
 
 	return &descriptions
