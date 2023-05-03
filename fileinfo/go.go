@@ -68,10 +68,10 @@ func GoInfo(args *Args) (*FileInfo, error) {
 
 func idx(isExported bool) int {
 	if isExported {
-		return 1 // public
+		return PUB
 	}
 
-	return 0 // private
+	return PRIV
 }
 
 func goInfoProcessIdent(o *ast.Object, i *organizer) {
