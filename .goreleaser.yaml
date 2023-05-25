@@ -15,7 +15,7 @@ archives:
 brews:
   - tap:
       owner: bayashi
-      name: homebrew-goverview
+      name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     folder: Formula
     homepage: https://github.com/bayashi/goverview

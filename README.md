@@ -84,8 +84,8 @@ Full options:
 
 If you are using Mac:
 
-    brew tap bayashi/goverview
-    brew install bayashi/goverview/goverview
+    brew tap bayashi/tap
+    brew install bayashi/tap/goverview
 
 ### binary install
 
